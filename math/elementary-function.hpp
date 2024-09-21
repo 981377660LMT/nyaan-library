@@ -1,20 +1,5 @@
 #pragma once
 
-long long my_gcd(long long x, long long y) {
-  long long z;
-  if (x > y) swap(x, y);
-  while (x) {
-    x = y % (z = x);
-    y = z;
-  }
-  return y;
-}
-long long my_lcm(long long x, long long y) {
-  return 1LL * x / my_gcd(x, y) * y;
-}
-#define gcd my_gcd
-#define lcm my_lcm
-
 // totient function φ(N)=(1 ~ N , gcd(i,N) = 1)
 // {0, 1, 1, 2, 4, 2, 6, 4, ... }
 vector<int> EulersTotientFunction(int N) {
@@ -113,6 +98,7 @@ long long phi(long long n) {
 // Extended Euclidean algorithm
 // solve : ax + by = gcd(a, b)
 // return : pair(x, y)
+// a>=0,b>=0 でない場合 gcd(a, b) は負にもなり得るので注意
 pair<long long, long long> extgcd(long long a, long long b) {
   if (b == 0) return make_pair(1, 0);
   long long x, y;

@@ -18,6 +18,9 @@ struct RationalBase {
   template <typename T1>
   RationalBase(const T1& _x) : RationalBase<T, U>(_x, T1{1}) {}
   template <typename T1, typename T2>
+  RationalBase(const pair<T1, T2>& _p)
+      : RationalBase<T, U>(_p.first, _p.second) {}
+  template <typename T1, typename T2>
   RationalBase(const T1& _x, const T2& _y) : x(_x), y(_y) {
     assert(y != 0);
     if (y == -1) x = -x, y = -y;
@@ -92,6 +95,7 @@ struct RationalBase {
     return os;
   }
 
+  // T にキャストされるので T が bigint の場合は to_ll も要る
   T to_mint(T mod) const {
     assert(mod != 0);
     T a = y, b = mod, u = 1, v = 0, t;
@@ -105,49 +109,4 @@ struct RationalBase {
 };
 
 using Rational = RationalBase<long long, __int128_t>;
-
-template <typename R = Rational>
-struct Binomial {
-  vector<R> fc;
-  Binomial(int = 0) { fc.emplace_back(1); }
-  void extend() {
-    int n = fc.size();
-    R nxt = fc.back() * n;
-    fc.push_back(nxt);
-  }
-  R fac(int n) {
-    if (n < 0) return 0;
-    while ((int)fc.size() <= n) extend();
-    return fc[n];
-  }
-  R finv(int n) {
-    if (n < 0) return 0;
-    return fac(n).inverse();
-  }
-  R inv(int n) {
-    if (n < 0) return -inv(-n);
-    return R{1, max(n, 1)};
-  }
-  R C(int n, int r) {
-    if (n < 0 or r < 0 or n < r) return R{0};
-    return fac(n) * finv(n - r) * finv(r);
-  }
-  R operator()(int n, int r) { return C(n, r); }
-  template <typename I>
-  R multinomial(const vector<I>& r) {
-    static_assert(is_integral<I>::value == true);
-    int n = 0;
-    for (auto& x : r) {
-      if (x < 0) return R{0};
-      n += x;
-    }
-    R res = fac(n);
-    for (auto& x : r) res *= finv(x);
-    return res;
-  }
-
-  template <typename I>
-  R operator()(const vector<I>& r) {
-    return multinomial(r);
-  }
-};
+using Fraction = Rational;

@@ -1,18 +1,6 @@
 #pragma once
 
-#define ENABLE_HAS_VAR(var)                                  \
-  template <typename T>                                      \
-  class has_##var {                                          \
-    template <typename U, int = (&U::var, 0)>                \
-    static true_type check(U *);                             \
-    static false_type check(...);                            \
-    static T *t;                                             \
-                                                             \
-   public:                                                   \
-    static constexpr bool value = decltype(check(t))::value; \
-  };                                                         \
-  template <typename T>                                      \
-  inline constexpr bool has_##var##_v = has_##var<T>::value;
+#include "../internal/internal-type-traits.hpp"
 
 ENABLE_HAS_VAR(lazy);
 ENABLE_HAS_VAR(shift);
@@ -535,6 +523,10 @@ struct RBSTSegmentTreeBase {
     Ptr p = _find(root, i);
     return p ? p->val : ti();
   }
+  bool exist(I i) {
+    Ptr p = _find(root, i);
+    return p != nullptr;
+  }
 
   // 1 点 値の書き換え
   // func の返り値は void !!!!!!(参照された値を直接更新する)
@@ -584,26 +576,26 @@ struct RBSTSegmentTreeBase {
   void shift(const I &sh) { _shift(root, sh); }
 
   // key 最小を取得
-  I get_min_key(I failed = -1) { return _get_min_keyval(root, failed).first; }
+  I get_min_key(I failed = {}) { return _get_min_keyval(root, failed).first; }
   // key 最大を取得
-  I get_max_key(I failed = -1) { return _get_max_keyval(root, failed).first; }
+  I get_max_key(I failed = {}) { return _get_max_keyval(root, failed).first; }
   // (key, val) 最小を取得
-  pair<I, T> get_min_keyval(I failed = -1) {
+  pair<I, T> get_min_keyval(I failed = {}) {
     return _get_min_keyval(root, failed);
   }
   // (key, val) 最大を取得
-  pair<I, T> get_max_keyval(I failed = -1) {
+  pair<I, T> get_max_keyval(I failed = {}) {
     return _get_max_keyval(root, failed);
   }
   // (key, val) 最小を pop
-  pair<I, T> pop_min_keyval(I failed = -1) {
+  pair<I, T> pop_min_keyval(I failed = {}) {
     assert(root != nullptr);
     auto kv = _get_min_keyval(root, failed);
     erase(kv.first);
     return kv;
   }
   // (key, val) 最大を取得
-  pair<I, T> pop_max_keyval(I failed = -1) {
+  pair<I, T> pop_max_keyval(I failed = {}) {
     assert(root != nullptr);
     auto kv = _get_max_keyval(root, failed);
     erase(kv.first);

@@ -2,7 +2,7 @@
 //
 #include "../../template/template.hpp"
 //
-#include "../../fps/fps-composition.hpp"
+#include "../../fps/fps-composition-old.hpp"
 #include "../../fps/newton-method.hpp"
 //
 #include "../../fps/ntt-friendly-fps.hpp"

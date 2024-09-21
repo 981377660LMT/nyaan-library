@@ -15,6 +15,8 @@ using vd = V<double>;
 using vs = V<string>;
 using vvi = vector<vector<int>>;
 using vvl = vector<vector<long long>>;
+template <typename T>
+using minpq = priority_queue<T, vector<T>, greater<T>>;
 
 template <typename T, typename U>
 struct P : pair<T, U> {
@@ -128,7 +130,7 @@ vector<T> mkuni(const vector<T> &v) {
 }
 
 template <typename F>
-vector<int> mkord(int N,F f) {
+vector<int> mkord(int N, F f) {
   vector<int> ord(N);
   iota(begin(ord), end(ord), 0);
   sort(begin(ord), end(ord), f);
@@ -157,11 +159,79 @@ T mkrev(const T &v) {
 }
 
 template <typename T>
-bool nxp(vector<T> &v) {
+bool nxp(T &v) {
   return next_permutation(begin(v), end(v));
 }
 
+// 返り値の型は入力の T に依存
+// i 要素目 : [0, a[i])
 template <typename T>
-using minpq = priority_queue<T, vector<T>, greater<T>>;
+vector<vector<T>> product(const vector<T> &a) {
+  vector<vector<T>> ret;
+  vector<T> v;
+  auto dfs = [&](auto rc, int i) -> void {
+    if (i == (int)a.size()) {
+      ret.push_back(v);
+      return;
+    }
+    for (int j = 0; j < a[i]; j++) v.push_back(j), rc(rc, i + 1), v.pop_back();
+  };
+  dfs(dfs, 0);
+  return ret;
+}
+
+// F : function(void(T&)), mod を取る操作
+// T : 整数型のときはオーバーフローに注意する
+template <typename T>
+T Power(T a, long long n, const T &I, const function<void(T &)> &f) {
+  T res = I;
+  for (; n; f(a = a * a), n >>= 1) {
+    if (n & 1) f(res = res * a);
+  }
+  return res;
+}
+// T : 整数型のときはオーバーフローに注意する
+template <typename T>
+T Power(T a, long long n, const T &I = T{1}) {
+  return Power(a, n, I, function<void(T &)>{[](T &) -> void {}});
+}
+
+template <typename T>
+T Rev(const T &v) {
+  T res = v;
+  reverse(begin(res), end(res));
+  return res;
+}
+
+template <typename T>
+vector<T> Transpose(const vector<T> &v) {
+  using U = typename T::value_type;
+  if(v.empty()) return {};
+  int H = v.size(), W = v[0].size();
+  vector res(W, T(H, U{}));
+  for (int i = 0; i < H; i++) {
+    for (int j = 0; j < W; j++) {
+      res[j][i] = v[i][j];
+    }
+  }
+  return res;
+}
+
+template <typename T>
+vector<T> Rotate(const vector<T> &v, int clockwise = true) {
+  using U = typename T::value_type;
+  int H = v.size(), W = v[0].size();
+  vector res(W, T(H, U{}));
+  for (int i = 0; i < H; i++) {
+    for (int j = 0; j < W; j++) {
+      if (clockwise) {
+        res[W - 1 - j][i] = v[i][j];
+      } else {
+        res[j][H - 1 - i] = v[i][j];
+      }
+    }
+  }
+  return res;
+}
 
 }  // namespace Nyaan

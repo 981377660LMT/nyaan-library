@@ -1,14 +1,16 @@
 #define PROBLEM "https://yukicoder.me/problems/no/2266"
-
+//
 #include "../../template/template.hpp"
 //
 #include "../../atcoder/math.hpp"
+#include "../../math/stern-brocot-tree-binary-search.hpp"
 //
 #include "../../math/rational.hpp"
-#include "../../math/stern-brocot-tree.hpp"
 //
 #include "../../multiplicative-function/enumerate-sum-of-multiplicative-function.hpp"
 using namespace Nyaan;
+
+using SBT = SternBrocotTreeNode<ll>;
 
 // k 番目に小さい
 pl calc(ll N, ll K) {
@@ -26,9 +28,11 @@ pl calc(ll N, ll K) {
     });
     return s;
   };
-  auto judge = [&](Rational f) -> bool { return cnt(f) >= K; };
-  auto ans = binary_search_on_stern_brocot_tree(judge, N);
-  return {ans.x, ans.y};
+  auto judge = [&](pair<ll, ll> f) -> bool {
+    return cnt({f.first, f.second}) >= K;
+  };
+  auto ans = binary_search_on_stern_brocot_tree<ll>(judge, N).second;
+  return {ans.first, ans.second};
 }
 
 void q() {
